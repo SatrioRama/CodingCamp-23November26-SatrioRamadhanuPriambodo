@@ -1,8 +1,8 @@
-# Requirements Document
+﻿# Requirements Document
 
 ## Introduction
 
-A mobile-friendly single-page web application that helps users track daily spending. The app displays a running total balance, a scrollable transaction history, and a pie chart of spending by category. It is built with HTML, CSS, and Vanilla JavaScript — no backend or build tooling required. All data persists in the browser's Local Storage. Tailwind CSS (Play CDN) and Chart.js (CDN) are the only external libraries permitted.
+A mobile-friendly single-page web application that helps users track daily spending. The app displays a running total balance, a scrollable transaction history, and a pie chart of spending by category. It is built with HTML, CSS, and Vanilla JavaScript â€” no backend or build tooling required. All data persists in the browser's Local Storage. Tailwind CSS (Play CDN) and Chart.js (CDN) are the only external libraries permitted.
 
 ## Glossary
 
@@ -70,6 +70,7 @@ A mobile-friendly single-page web application that helps users track daily spend
 2. THE Chart SHALL display one segment per category that has at least one transaction, sized proportionally to that category's total amount; tooltips SHALL show each category's amount formatted via `formatRupiah()`.
 3. WHEN a transaction is added, THE Chart SHALL update automatically to reflect the new category totals.
 4. WHEN a transaction is deleted, THE Chart SHALL update automatically to reflect the new category totals.
+5. WHILE there are no transactions, THE App SHALL hide the Chart canvas and display the message "No spending data yet. Add a transaction to see the chart." in its place.
 
 ---
 
@@ -131,7 +132,7 @@ A mobile-friendly single-page web application that helps users track daily spend
 
 #### Acceptance Criteria
 
-1. THE App SHALL be implemented using only HTML, CSS, and Vanilla JavaScript — no JavaScript frameworks are permitted.
+1. THE App SHALL be implemented using only HTML, CSS, and Vanilla JavaScript â€” no JavaScript frameworks are permitted.
 2. THE App SHALL load Tailwind CSS and Chart.js exclusively via CDN links; no local copies or build steps are required.
 3. THE App SHALL contain exactly one CSS file located inside a `css/` directory.
 4. THE App SHALL contain exactly one JavaScript file located inside a `js/` directory.
@@ -150,4 +151,4 @@ A mobile-friendly single-page web application that helps users track daily spend
 3. THE display-options bar (sort control and Theme_Toggle) SHALL be a `<section>` element with `aria-label="Display options"` placed as the first child of the `<main>` element.
 4. THE `#form-error` element SHALL carry `role="alert"` so validation messages are announced immediately by screen readers.
 5. THE `#spending-chart` canvas SHALL carry `role="img"` and `aria-label="Pie chart of spending by category"`.
-6. THE App SHALL include a `<footer>` after `</main>` containing the text "Expense & Budget Visualizer – Coding Camp 2026".
+6. THE App SHALL include a `<footer>` after `</main>` containing the text "Expense & Budget Visualizer â€“ Coding Camp 2026".

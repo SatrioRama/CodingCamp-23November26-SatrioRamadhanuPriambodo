@@ -1,4 +1,4 @@
-# Design Document
+﻿# Design Document
 
 ## Overview
 
@@ -13,8 +13,8 @@ The delivered artifact is three files:
 | `js/app.js` | All application logic |
 
 External dependencies loaded via CDN only:
-- **Tailwind CSS Play CDN** — utility-first styling
-- **Chart.js** — pie chart rendering
+- **Tailwind CSS Play CDN** â€” utility-first styling
+- **Chart.js** â€” pie chart rendering
 
 ---
 
@@ -24,20 +24,20 @@ The application follows a unidirectional data-flow pattern inside a single JavaS
 
 ```
 User Interaction
-      │
-      ▼
+      â”‚
+      â–¼
   Event Handler  (in app.js)
-      │
-      ▼
+      â”‚
+      â–¼
   State Mutation  (addTransaction / deleteTransaction / addCategory / setSort / setTheme)
-      │
-      ▼
-  Persistence  (saveState → localStorage)
-      │
-      ▼
-  Render  (renderAll → renderList + renderBalance + renderChart + renderCategories)
-      │
-      ▼
+      â”‚
+      â–¼
+  Persistence  (saveState â†’ localStorage)
+      â”‚
+      â–¼
+  Render  (renderAll â†’ renderList + renderBalance + renderChart + renderCategories)
+      â”‚
+      â–¼
   DOM / Chart.js
 ```
 
@@ -45,7 +45,7 @@ There is one authoritative in-memory state object. Every user action mutates the
 
 **Startup sequence:**
 
-1. Parse `localStorage` → populate in-memory state (or use defaults if empty).
+1. Parse `localStorage` â†’ populate in-memory state (or use defaults if empty).
 2. Apply saved theme.
 3. Call `renderAll()`.
 4. Attach all event listeners.
@@ -59,12 +59,12 @@ There is one authoritative in-memory state object. Every user action mutates the
 **Responsibility:** Collect item name, amount, and category from the user and emit a validated transaction.
 
 **DOM elements:**
-- `#item-name` — `<input type="text">`
-- `#amount` — `<input type="number" min="1" step="1">` (whole Rupiah amounts; no decimal places)
-- `#category` — `<select>` populated from state
-- `#add-category-input` — `<input type="text">` for new custom categories
-- `#add-category-btn` — `<button>` to confirm a new custom category
-- `#transaction-form` — `<form>` wrapping the above
+- `#item-name` â€” `<input type="text">`
+- `#amount` â€” `<input type="number" min="1" step="1">` (whole Rupiah amounts; no decimal places)
+- `#category` â€” `<select>` populated from state
+- `#add-category-input` â€” `<input type="text">` for new custom categories
+- `#add-category-btn` â€” `<button>` to confirm a new custom category
+- `#transaction-form` â€” `<form>` wrapping the above
 
 **JavaScript interface:**
 
@@ -88,7 +88,7 @@ function handleAddCategory(): void
 **Responsibility:** Display all transactions ordered by the active sort option; provide per-row delete.
 
 **DOM elements:**
-- `#transaction-list` — `<ul>` or `<tbody>` container
+- `#transaction-list` â€” `<ul>` or `<tbody>` container
 - Each row: item name, formatted amount, category badge, delete button
 
 **JavaScript interface:**
@@ -105,7 +105,7 @@ function handleDelete(id: string): void
 **Responsibility:** Show the running sum of all transaction amounts.
 
 **DOM elements:**
-- `#balance` — element updated via `textContent`
+- `#balance` â€” element updated via `textContent`
 
 **JavaScript interface:**
 
@@ -121,7 +121,8 @@ function computeBalance(transactions: Transaction[]): number
 **Responsibility:** Render and update a Chart.js pie chart representing spending per category.
 
 **DOM elements:**
-- `#spending-chart` — `<canvas>`
+- `#spending-chart` â€” `<canvas>`
+- `#chart-empty` — `<p>` empty-state message; visible when there are no transactions, hidden otherwise
 
 **JavaScript interface:**
 
@@ -130,7 +131,7 @@ function renderChart(transactions: Transaction[]): void
 function computeCategoryTotals(transactions: Transaction[]): Record<string, number>
 ```
 
-A single `Chart` instance is created on first render and updated via `chart.data = …; chart.update()` on subsequent calls, avoiding unnecessary DOM teardown.
+A single `Chart` instance is created on first render and updated via `chart.data = â€¦; chart.update()` on subsequent calls, avoiding unnecessary DOM teardown.
 
 ---
 
@@ -139,7 +140,7 @@ A single `Chart` instance is created on first render and updated via `chart.data
 **Responsibility:** Let the user choose a sort order for the Transaction List.
 
 **DOM elements:**
-- `#sort-select` — `<select>` with three `<option>` values
+- `#sort-select` â€” `<select>` with three `<option>` values
 
 **Sort options (string enum):**
 
@@ -156,7 +157,7 @@ function handleSortChange(event: Event): void
 function sortTransactions(transactions: Transaction[], option: SortOption): Transaction[]
 ```
 
-`sortTransactions` is a **pure function** — it returns a new sorted array and does not mutate the input.
+`sortTransactions` is a **pure function** â€” it returns a new sorted array and does not mutate the input.
 
 ---
 
@@ -165,7 +166,7 @@ function sortTransactions(transactions: Transaction[], option: SortOption): Tran
 **Responsibility:** Switch between dark and light visual modes and persist the preference.
 
 **DOM elements:**
-- `#theme-toggle` — `<button>` or `<input type="checkbox">`
+- `#theme-toggle` â€” `<button>` or `<input type="checkbox">`
 
 **Mechanism:** Toggling adds/removes a `dark` class on `<html>`. Tailwind's `darkMode: 'class'` strategy applies dark-variant utilities automatically. `applyTheme(theme)` handles all three side effects: (1) toggling the `dark` class on `<html>`, (2) updating the icon spans and label text in `#theme-toggle`, and (3) setting `aria-pressed` to `"true"` (dark) or `"false"` (light) on the button. It is called on page load to restore the saved theme, and by `handleThemeToggle` on each user click.
 
@@ -218,9 +219,9 @@ function formatRupiah(value) {
 ```
 
 This function is used in:
-- `renderBalance` — the running total in the Balance_Display
-- `renderList` — each transaction's amount in the Transaction_List
-- The Chart.js tooltip callback — amounts shown on pie slice hover
+- `renderBalance` â€” the running total in the Balance_Display
+- `renderList` â€” each transaction's amount in the Transaction_List
+- The Chart.js tooltip callback â€” amounts shown on pie slice hover
 
 The amount input uses `min="1"` and `step="1"` because Rupiah is a whole-number currency.
 
@@ -274,7 +275,7 @@ const DEFAULT_STATE = {
 
 ## Correctness Properties
 
-*A property is a characteristic or behavior that should hold true across all valid executions of a system — essentially, a formal statement about what the system should do. Properties serve as the bridge between human-readable specifications and machine-verifiable correctness guarantees.*
+*A property is a characteristic or behavior that should hold true across all valid executions of a system â€” essentially, a formal statement about what the system should do. Properties serve as the bridge between human-readable specifications and machine-verifiable correctness guarantees.*
 
 ### Property 1: State serialization round-trip
 
@@ -310,7 +311,7 @@ const DEFAULT_STATE = {
 
 ### Property 5: Amount-ascending sort order invariant
 
-*For any* list of transactions sorted with `"amount-asc"`, every adjacent pair of elements SHALL satisfy `transactions[i].amount ≤ transactions[i+1].amount`.
+*For any* list of transactions sorted with `"amount-asc"`, every adjacent pair of elements SHALL satisfy `transactions[i].amount â‰¤ transactions[i+1].amount`.
 
 **Validates: Requirements 7.1, 7.2**
 
@@ -318,7 +319,7 @@ const DEFAULT_STATE = {
 
 ### Property 6: Amount-descending sort order invariant
 
-*For any* list of transactions sorted with `"amount-desc"`, every adjacent pair of elements SHALL satisfy `transactions[i].amount ≥ transactions[i+1].amount`.
+*For any* list of transactions sorted with `"amount-desc"`, every adjacent pair of elements SHALL satisfy `transactions[i].amount â‰¥ transactions[i+1].amount`.
 
 **Validates: Requirements 7.1, 7.2**
 
@@ -326,7 +327,7 @@ const DEFAULT_STATE = {
 
 ### Property 7: Category-alphabetical sort order invariant
 
-*For any* list of transactions sorted with `"category-asc"`, every adjacent pair of elements SHALL satisfy `transactions[i].category ≤ transactions[i+1].category` (lexicographic comparison).
+*For any* list of transactions sorted with `"category-asc"`, every adjacent pair of elements SHALL satisfy `transactions[i].category â‰¤ transactions[i+1].category` (lexicographic comparison).
 
 **Validates: Requirements 7.1, 7.2**
 
@@ -342,7 +343,7 @@ const DEFAULT_STATE = {
 
 ### Property 9: Non-positive amounts are rejected
 
-*For any* numeric value that is zero, negative, or non-finite (NaN, ±Infinity), the input validation logic SHALL classify it as invalid and reject the transaction.
+*For any* numeric value that is zero, negative, or non-finite (NaN, Â±Infinity), the input validation logic SHALL classify it as invalid and reject the transaction.
 
 **Validates: Requirements 1.4**
 
@@ -402,7 +403,7 @@ Property-based tests verify the correctness properties listed above across a wid
 // Feature: expense-budget-visualizer, Property N: <property_text>
 ```
 
-**Property–test mapping:**
+**Propertyâ€“test mapping:**
 
 | Property | Test description |
 |---|---|
@@ -410,7 +411,7 @@ Property-based tests verify the correctness properties listed above across a wid
 | Property 2 | Generate random transaction array, assert `computeBalance` equals `array.reduce((s,t) => s+t.amount, 0)` |
 | Property 3 | Generate random transaction array, assert sum of `computeCategoryTotals` values equals `computeBalance` |
 | Property 4 | Generate random transaction array and sort option, assert `sortTransactions` output is a permutation of input |
-| Properties 5–7 | Generate random array and each sort option, assert adjacent-pair invariant |
+| Properties 5â€“7 | Generate random array and each sort option, assert adjacent-pair invariant |
 | Property 8 | Generate whitespace-only strings, assert validation returns invalid |
 | Property 9 | Generate zero/negative/NaN/Infinity values, assert validation returns invalid |
 | Property 10 | Generate random string arrays as custom categories, save and load state, assert restoration |

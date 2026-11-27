@@ -1,8 +1,8 @@
-# Implementation Plan: Expense Budget Visualizer
+﻿# Implementation Plan: Expense Budget Visualizer
 
 ## Overview
 
-Build a mobile-first, single-page expense tracker as three files (`index.html`, `css/style.css`, `js/app.js`). All logic is Vanilla JavaScript with a unidirectional data-flow pattern: user action → state mutation → localStorage write → re-render. Tailwind CSS (Play CDN) and Chart.js (CDN) are the only external dependencies.
+Build a mobile-first, single-page expense tracker as three files (`index.html`, `css/style.css`, `js/app.js`). All logic is Vanilla JavaScript with a unidirectional data-flow pattern: user action â†’ state mutation â†’ localStorage write â†’ re-render. Tailwind CSS (Play CDN) and Chart.js (CDN) are the only external dependencies.
 
 ## Tasks
 
@@ -72,7 +72,7 @@ Build a mobile-first, single-page expense tracker as three files (`index.html`, 
   - [x] 4.3 Implement input validation logic
     - `validateTransaction({name, amount, category})`: return `{valid, errors}` where errors names invalid fields
     - Reject item name that is empty or whitespace-only after trimming
-    - Reject amount that is zero, negative, non-finite (NaN, ±Infinity), or not a number
+    - Reject amount that is zero, negative, non-finite (NaN, Â±Infinity), or not a number
     - Reject category that is empty or not in the current category list
     - _Requirements: 1.4_
 
@@ -101,7 +101,7 @@ Build a mobile-first, single-page expense tracker as three files (`index.html`, 
     - Call `renderBalance`, `renderList`, `renderChart`, and `renderCategories` with current state values
     - _Requirements: 5.3_
 
-- [x] 6. Checkpoint — Wire up initial app load
+- [x] 6. Checkpoint â€” Wire up initial app load
   - In `js/app.js`, on `DOMContentLoaded`:
     1. Call `loadState()` to populate the in-memory state object
     2. Call `applyTheme(state.theme)` to restore the saved theme
@@ -149,7 +149,7 @@ Build a mobile-first, single-page expense tracker as three files (`index.html`, 
   - Ensure the transaction list scrolls when it overflows its container
   - _Requirements: 2.2, 9.3, 9.5_
 
-- [x] 9. Final checkpoint — End-to-end verification
+- [x] 9. Final checkpoint â€” End-to-end verification
   - Open `index.html` directly in Chrome, Firefox, Edge, and Safari (no server required)
   - Confirm: adding a transaction updates the list, balance, and pie chart
   - Confirm: deleting a transaction updates the list, balance, and pie chart
@@ -158,7 +158,7 @@ Build a mobile-first, single-page expense tracker as three files (`index.html`, 
   - Confirm: sort control reorders the list immediately and new transactions respect the active sort
   - Confirm: submitting the form with any empty field shows a validation message and does not add a transaction
   - Confirm: custom categories appear in the selector and persist after reload
-  - _Requirements: 1.1–1.5, 2.1–2.3, 3.1–3.3, 4.1–4.4, 5.1–5.3, 6.1–6.4, 7.1–7.3, 8.1–8.4, 9.5_
+  - _Requirements: 1.1â€“1.5, 2.1â€“2.3, 3.1â€“3.3, 4.1â€“4.4, 5.1â€“5.3, 6.1â€“6.4, 7.1â€“7.3, 8.1â€“8.4, 9.5_
 
 - [x] 10. Post-implementation updates
   - [x] 10.1 Currency: switch all displayed amounts to Indonesian Rupiah
@@ -175,8 +175,8 @@ Build a mobile-first, single-page expense tracker as three files (`index.html`, 
     - Add `role="alert"` to `#form-error`
     - Add `role="img"` and `aria-label="Pie chart of spending by category"` to `#spending-chart`
     - Add `aria-hidden="true"` to the icon spans; add `aria-pressed="false"` to `#theme-toggle`
-    - Add `<footer>` after `</main>` with "Expense & Budget Visualizer – Coding Camp 2026"
-    - _Requirements: 10.1–10.6_
+    - Add `<footer>` after `</main>` with "Expense & Budget Visualizer â€“ Coding Camp 2026"
+    - _Requirements: 10.1â€“10.6_
 
   - [x] 10.3 applyTheme extended responsibility
     - Moved button icon/label update logic from `handleThemeToggle` into `applyTheme(theme)` so the button syncs correctly on page load
@@ -189,9 +189,15 @@ Build a mobile-first, single-page expense tracker as three files (`index.html`, 
     - On page load, `#sort-select` value is synced to `state.sortOption` after `renderAll`
     - _Requirements: 7.2, 7.3_
 
+  - [x] 10.5 Chart empty state
+    - Add `<p id="chart-empty">` after `<canvas id="spending-chart">` in `index.html`, initially hidden
+    - In `renderChart`: when transactions is empty, add `hidden` to the canvas and remove `hidden` from `#chart-empty`
+    - When transactions exist, remove `hidden` from the canvas and add `hidden` to `#chart-empty`
+    - _Requirements: 4.5_
+
 ## Notes
 
-- All tasks produce files in `index.html`, `css/style.css`, or `js/app.js` — no build step or test runner is needed
+- All tasks produce files in `index.html`, `css/style.css`, or `js/app.js` â€” no build step or test runner is needed
 - No frameworks, no npm, no bundler: open `index.html` in a browser to run the app
 - Tasks are ordered so each step produces an incrementally runnable state
 - Checkpoints (tasks 6 and 9) are manual verification steps against the running page

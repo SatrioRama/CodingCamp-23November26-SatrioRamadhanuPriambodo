@@ -407,6 +407,8 @@ function renderChart(transactions) {
   const canvas = document.getElementById('spending-chart');
   if (!canvas) return; // Guard: canvas element not present in the DOM
 
+  const emptyEl = document.getElementById('chart-empty');
+
   // ----- Empty-state handling -----
   if (transactions.length === 0) {
     if (chartInstance !== null) {
@@ -418,8 +420,15 @@ function renderChart(transactions) {
     if (ctx) {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
     }
+    // Show empty state, hide canvas
+    canvas.classList.add('hidden');
+    if (emptyEl) emptyEl.classList.remove('hidden');
     return;
   }
+
+  // Show canvas, hide empty state
+  canvas.classList.remove('hidden');
+  if (emptyEl) emptyEl.classList.add('hidden');
 
   // ----- Compute data -----
   const totals   = computeCategoryTotals(transactions);
