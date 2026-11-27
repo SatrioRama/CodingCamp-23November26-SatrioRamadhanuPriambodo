@@ -25,7 +25,7 @@ Build a mobile-first, single-page expense tracker as three files (`index.html`, 
   - [x] 2.2 Add the Input Form section to `index.html`
     - Add `<form id="transaction-form">` with:
       - `<input type="text" id="item-name">` for item name
-      - `<input type="number" id="amount" min="0.01" step="0.01">` for amount
+      - `<input type="number" id="amount" min="1" step="1">` for amount
       - `<select id="category">` with default options Food, Transport, Fun
       - Submit `<button>` to add the transaction
     - Add `<input type="text" id="add-category-input">` and `<button id="add-category-btn">` for custom categories
@@ -50,7 +50,7 @@ Build a mobile-first, single-page expense tracker as three files (`index.html`, 
     - _Requirements: 9.1_
 
   - [x] 3.2 Implement `saveState(state)` and `loadState()` functions
-    - `saveState`: serialize and write `ebv_transactions`, `ebv_categories`, and `ebv_theme` keys to `localStorage`
+    - `saveState`: serialize and write `ebv_transactions`, `ebv_categories`, `ebv_theme`, and `ebv_sort` keys to `localStorage`
     - `loadState`: read and parse those keys; return `DEFAULT_STATE` values for any absent or invalid JSON keys
     - Add `try/catch` in `saveState` for quota errors (log a console warning, do not throw)
     - Add `try/catch` in `loadState` for JSON parse errors (fall back to default for that key only)
@@ -78,7 +78,7 @@ Build a mobile-first, single-page expense tracker as three files (`index.html`, 
 
 - [x] 5. Implement render functions in `js/app.js`
   - [x] 5.1 Implement `renderBalance(transactions)`
-    - Set `#balance` `textContent` to the formatted sum from `computeBalance`
+    - Set `#balance` `textContent` to `formatRupiah(computeBalance(transactions))`
     - _Requirements: 3.1, 3.2, 3.3_
 
   - [x] 5.2 Implement `renderList(transactions, sortOption)`
@@ -115,7 +115,7 @@ Build a mobile-first, single-page expense tracker as three files (`index.html`, 
   - [x] 7.1 Implement `handleFormSubmit(event)` for `#transaction-form`
     - Call `event.preventDefault()`
     - Read values from `#item-name`, `#amount`, `#category`
-    - Run `validateTransaction`; if invalid, display an inline message naming the failing fields and return early
+    - Run `validateTransaction`; if invalid, display the first error message in `#form-error` (remove `hidden` class), and return early
     - On valid input: create a `Transaction` object with `crypto.randomUUID()` (fall back to timestamp + `Math.random()`) and `Date.now()`
     - Push to `state.transactions`, call `saveState(state)`, call `renderAll(state)`, reset the form
     - _Requirements: 1.3, 1.4, 1.5, 3.2, 4.3, 5.1_
@@ -134,11 +134,12 @@ Build a mobile-first, single-page expense tracker as three files (`index.html`, 
 
   - [x] 7.4 Implement `handleSortChange(event)` for `#sort-select`
     - Update `state.sortOption` to the selected value
-    - Call `renderList(state.transactions, state.sortOption)` (no persistence needed for sort preference)
+    - Call `saveState(state)` to persist the preference in `ebv_sort`
+    - Call `renderList(state.transactions, state.sortOption)` to reorder the list immediately
     - _Requirements: 7.2, 7.3_
 
   - [x] 7.5 Implement `handleThemeToggle()` and `applyTheme(theme)` for `#theme-toggle`
-    - `applyTheme('dark')`: add class `dark` to `<html>`; `applyTheme('light')`: remove it
+    - `applyTheme(theme)`: (1) add/remove the `dark` class on `<html>`; (2) show/hide icon spans and update the label in `#theme-toggle`; (3) set `aria-pressed` to `"true"` (dark) or `"false"` (light) on `#theme-toggle`. Called on page load and on each user click.
     - `handleThemeToggle`: toggle `state.theme` between `'dark'` and `'light'`, call `applyTheme`, write `ebv_theme` to `localStorage`
     - _Requirements: 8.1, 8.2, 8.3, 8.4_
 
@@ -158,6 +159,35 @@ Build a mobile-first, single-page expense tracker as three files (`index.html`, 
   - Confirm: submitting the form with any empty field shows a validation message and does not add a transaction
   - Confirm: custom categories appear in the selector and persist after reload
   - _Requirements: 1.1–1.5, 2.1–2.3, 3.1–3.3, 4.1–4.4, 5.1–5.3, 6.1–6.4, 7.1–7.3, 8.1–8.4, 9.5_
+
+- [x] 10. Post-implementation updates
+  - [x] 10.1 Currency: switch all displayed amounts to Indonesian Rupiah
+    - Add `formatRupiah(value)` helper using `toLocaleString('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0, maximumFractionDigits: 0 })`
+    - Use `formatRupiah` in `renderBalance`, `renderList`, and the Chart.js tooltip callback
+    - Update amount input to `min="1"` `step="1"` `placeholder="e.g. 25000"`; update label to "Amount (Rp)"
+    - Update balance placeholder in HTML to "Rp 0"
+    - _Requirements: 3.1, 4.2_
+
+  - [x] 10.2 Semantic HTML and accessibility
+    - Add `<h1>Expense & Budget Visualizer</h1>` inside `<header>` as the page title
+    - Change balance element from `<h1 id="balance">` to `<p id="balance" aria-live="polite">`
+    - Move sort/theme bar inside `<main>` as first child; change its `<div>` to `<section aria-label="Display options">`
+    - Add `role="alert"` to `#form-error`
+    - Add `role="img"` and `aria-label="Pie chart of spending by category"` to `#spending-chart`
+    - Add `aria-hidden="true"` to the icon spans; add `aria-pressed="false"` to `#theme-toggle`
+    - Add `<footer>` after `</main>` with "Expense & Budget Visualizer – Coding Camp 2026"
+    - _Requirements: 10.1–10.6_
+
+  - [x] 10.3 applyTheme extended responsibility
+    - Moved button icon/label update logic from `handleThemeToggle` into `applyTheme(theme)` so the button syncs correctly on page load
+    - `applyTheme` now also sets `aria-pressed` on `#theme-toggle`
+    - _Requirements: 8.1, 8.4, 10.5_
+
+  - [x] 10.4 Sort preference persistence
+    - `handleSortChange` now calls `saveState(state)` to persist `state.sortOption` in `ebv_sort`
+    - `loadState` reads and validates `ebv_sort`; falls back to `DEFAULT_STATE.sortOption`
+    - On page load, `#sort-select` value is synced to `state.sortOption` after `renderAll`
+    - _Requirements: 7.2, 7.3_
 
 ## Notes
 
@@ -180,7 +210,8 @@ Build a mobile-first, single-page expense tracker as three files (`index.html`, 
     { "id": 6, "tasks": ["6"] },
     { "id": 7, "tasks": ["7.1", "7.2", "7.3", "7.4", "7.5"] },
     { "id": 8, "tasks": ["8"] },
-    { "id": 9, "tasks": ["9"] }
+    { "id": 9, "tasks": ["9"] },
+    { "id": 10, "tasks": ["10.1", "10.2", "10.3", "10.4"] }
   ]
 }
 ```

@@ -1,5 +1,5 @@
-// =============================================================================
-// expense-budget-visualizer — app.js
+﻿// =============================================================================
+// expense-budget-visualizer ΓÇö app.js
 // Vanilla JavaScript, no build tooling required.
 // =============================================================================
 
@@ -40,7 +40,7 @@
 
 /**
  * Immutable template used to initialise state when no persisted data exists.
- * Never mutate this object — always deep-copy before use.
+ * Never mutate this object ΓÇö always deep-copy before use.
  *
  * @type {AppState}
  */
@@ -104,7 +104,7 @@ function saveState(state) {
 /**
  * Read state from localStorage and return a fully-formed AppState.
  * Any missing key or JSON parse error falls back to the DEFAULT_STATE
- * value for that key only — the remaining keys are still restored.
+ * value for that key only ΓÇö the remaining keys are still restored.
  *
  * @returns {AppState}
  */
@@ -163,7 +163,7 @@ function loadState() {
 /**
  * Returns the arithmetic sum of all transaction amounts.
  * Returns 0 for an empty array.
- * Pure function — no side effects, no DOM access, no mutation.
+ * Pure function ΓÇö no side effects, no DOM access, no mutation.
  *
  * @param {Transaction[]} transactions
  * @returns {number}
@@ -179,10 +179,10 @@ function computeBalance(transactions) {
 /**
  * Returns a plain object mapping each category name to its total spend amount.
  * Only categories that have at least one transaction appear in the result.
- * Pure function — no side effects, no DOM access, no mutation.
+ * Pure function ΓÇö no side effects, no DOM access, no mutation.
  *
  * Example: [{ category: 'Food', amount: 5 }, { category: 'Food', amount: 7.5 }]
- *   → { Food: 12.5 }
+ *   ΓåÆ { Food: 12.5 }
  *
  * @param {Transaction[]} transactions
  * @returns {Record<string, number>}
@@ -195,6 +195,27 @@ function computeCategoryTotals(transactions) {
 }
 
 // ---------------------------------------------------------------------------
+// Currency Formatter  (IDR)
+// ---------------------------------------------------------------------------
+
+/**
+ * Formats a number as Indonesian Rupiah, e.g. formatRupiah(25000) -> "Rp 25.000".
+ * Uses the browser Intl API with the id-ID locale and IDR currency.
+ * No decimal places -- Rupiah amounts are whole numbers.
+ *
+ * @param {number} value
+ * @returns {string}
+ */
+function formatRupiah(value) {
+  return value.toLocaleString('id-ID', {
+    style: 'currency',
+    currency: 'IDR',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  });
+}
+
+// ---------------------------------------------------------------------------
 // Sort Transactions
 // ---------------------------------------------------------------------------
 
@@ -203,10 +224,10 @@ function computeCategoryTotals(transactions) {
  * The input array is never mutated.
  *
  * Sort options:
- *   'amount-asc'   — ascending by amount
- *   'amount-desc'  — descending by amount
- *   'category-asc' — lexicographic ascending by category name
- *   (unknown)      — returns a shallow copy of the input, order unchanged
+ *   'amount-asc'   ΓÇö ascending by amount
+ *   'amount-desc'  ΓÇö descending by amount
+ *   'category-asc' ΓÇö lexicographic ascending by category name
+ *   (unknown)      ΓÇö returns a shallow copy of the input, order unchanged
  *
  * @param {Transaction[]} transactions - The transactions to sort.
  * @param {SortOption}    sortOption   - The sort order to apply.
@@ -228,7 +249,7 @@ function sortTransactions(transactions, sortOption) {
       return copy.sort((a, b) => a.category.localeCompare(b.category));
 
     default:
-      // Unknown sort option — return a copy in original order.
+      // Unknown sort option ΓÇö return a copy in original order.
       return copy;
   }
 }
@@ -276,14 +297,14 @@ function validateTransaction({ name, amount, category }, categories) {
 
 /**
  * Reads the current total from computeBalance and updates the #balance element.
- * Formats the value as a USD currency string, e.g. "$12.50".
+ * Formats the value as Indonesian Rupiah using formatRupiah(), e.g. "Rp 25.000".
  *
  * @param {Transaction[]} transactions
  * @returns {void}
  */
 function renderBalance(transactions) {
   const total = computeBalance(transactions);
-  const formatted = total.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+  const formatted = formatRupiah(total);
   document.getElementById('balance').textContent = formatted;
 }
 
@@ -356,14 +377,14 @@ let chartInstance = null;
  * @type {string[]}
  */
 const CHART_COLORS = [
-  '#6366f1', // indigo-500   – Food
-  '#10b981', // emerald-500  – Transport
-  '#f59e0b', // amber-500    – Fun
-  '#ef4444', // red-500      – custom 1
-  '#3b82f6', // blue-500     – custom 2
-  '#8b5cf6', // violet-500   – custom 3
-  '#ec4899', // pink-500     – custom 4
-  '#14b8a6', // teal-500     – custom 5
+  '#6366f1', // indigo-500   ΓÇô Food
+  '#10b981', // emerald-500  ΓÇô Transport
+  '#f59e0b', // amber-500    ΓÇô Fun
+  '#ef4444', // red-500      ΓÇô custom 1
+  '#3b82f6', // blue-500     ΓÇô custom 2
+  '#8b5cf6', // violet-500   ΓÇô custom 3
+  '#ec4899', // pink-500     ΓÇô custom 4
+  '#14b8a6', // teal-500     ΓÇô custom 5
 ];
 
 /**
@@ -373,7 +394,7 @@ const CHART_COLORS = [
  *   - If `transactions` is empty, any existing chart is destroyed and the
  *     canvas is cleared so the element returns to a blank state.
  *   - If `chartInstance` already exists, its data is replaced in-place and
- *     `chartInstance.update()` is called — the Chart instance is never
+ *     `chartInstance.update()` is called ΓÇö the Chart instance is never
  *     destroyed and recreated unnecessarily.
  *   - If `chartInstance` is null, a new `Chart` of type `'pie'` is created.
  *
@@ -446,7 +467,7 @@ function renderChart(transactions) {
               const value = context.parsed;
               const total = context.dataset.data.reduce((a, b) => a + b, 0);
               const pct   = total > 0 ? ((value / total) * 100).toFixed(1) : '0.0';
-              return ` $${value.toFixed(2)} (${pct}%)`;
+              return ` ${formatRupiah(value)} (${pct}%)`;
             },
           },
         },
@@ -473,11 +494,11 @@ function renderChart(transactions) {
  *  3. If there are no transactions, show a placeholder message.
  *  4. Otherwise create one `<li>` per transaction containing:
  *     - Item name
- *     - Amount formatted as currency (e.g. $12.50)
+     - Amount formatted as Indonesian Rupiah using formatRupiah()
  *     - Category shown as a coloured badge
  *     - A delete button carrying a `data-id` attribute for event delegation
  *
- * Pure DOM side-effect — does not mutate state or touch localStorage.
+ * Pure DOM side-effect ΓÇö does not mutate state or touch localStorage.
  *
  * @param {Transaction[]} transactions - All recorded transactions.
  * @param {SortOption}    sortOption   - The currently active sort order.
@@ -534,13 +555,7 @@ function renderList(transactions, sortOption) {
     const amountSpan = document.createElement('span');
     amountSpan.className =
       'text-sm font-semibold text-gray-700 dark:text-gray-200 tabular-nums';
-    amountSpan.textContent =
-      '$' +
-      transaction.amount.toLocaleString('en-US', {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-      });
-
+    amountSpan.textContent = formatRupiah(transaction.amount);
     const deleteBtn = document.createElement('button');
     deleteBtn.type = 'button';
     deleteBtn.dataset.id = transaction.id;
@@ -571,10 +586,10 @@ function renderList(transactions, sortOption) {
  *
  * Call this function after every state mutation and on page load.
  * It delegates to each individual render function in the correct order:
- *   1. renderCategories — keeps the category <select> in sync with state.categories
- *   2. renderBalance    — updates the displayed total spend
- *   3. renderList       — rebuilds the sorted transaction list
- *   4. renderChart      — updates (or creates/destroys) the pie chart
+ *   1. renderCategories ΓÇö keeps the category <select> in sync with state.categories
+ *   2. renderBalance    ΓÇö updates the displayed total spend
+ *   3. renderList       ΓÇö rebuilds the sorted transaction list
+ *   4. renderChart      ΓÇö updates (or creates/destroys) the pie chart
  *
  * @param {AppState} state - The current application state.
  * @returns {void}
@@ -601,15 +616,27 @@ function renderAll(state) {
  * @returns {void}
  */
 function applyTheme(theme) {
-  if (theme === 'dark') {
-    document.documentElement.classList.add('dark');
-  } else {
-    document.documentElement.classList.remove('dark');
-  }
+  const isDark = theme === 'dark';
+
+  // 1. Toggle the dark class on <html> (Tailwind darkMode: 'class').
+  document.documentElement.classList.toggle('dark', isDark);
+
+  // 2. Sync the toggle button icon, label, and aria-pressed.
+  const btn = document.getElementById('theme-toggle');
+  if (!btn) return;
+
+  const iconLight = btn.querySelector('.theme-icon-light');
+  const iconDark  = btn.querySelector('.theme-icon-dark');
+  const label     = btn.querySelector('.theme-label');
+
+  if (iconLight) iconLight.classList.toggle('hidden', isDark);
+  if (iconDark)  iconDark.classList.toggle('hidden', !isDark);
+  if (label)     label.textContent = isDark ? 'Dark Mode' : 'Light Mode';
+  btn.setAttribute('aria-pressed', isDark ? 'true' : 'false');
 }
 
 // ---------------------------------------------------------------------------
-// Event Handler Stubs  (Tasks 7.1 – 7.5 will implement these)
+// Event Handler Stubs  (Tasks 7.1 ΓÇô 7.5 will implement these)
 // ---------------------------------------------------------------------------
 
 /**
@@ -724,29 +751,31 @@ function handleThemeToggle() {
   // 1. Toggle the theme in state.
   state.theme = state.theme === 'dark' ? 'light' : 'dark';
 
-  // 2. Apply the new theme (adds/removes the `dark` class on <html>).
+  // 2. Apply the theme (dark class, button icon/label, aria-pressed).
   applyTheme(state.theme);
 
   // 3. Persist the new theme preference to localStorage.
   saveState(state);
 
   // 4. Update the button label and icon spans if they exist.
-  const btn = document.getElementById('theme-toggle');
-  if (btn) {
-    const iconLight = btn.querySelector('.theme-icon-light');
-    const iconDark  = btn.querySelector('.theme-icon-dark');
-    const label     = btn.querySelector('.theme-label');
+  // const btn = document.getElementById('theme-toggle');
+  // if (btn) {
+  //   const iconLight = btn.querySelector('.theme-icon-light');
+  //   const iconDark  = btn.querySelector('.theme-icon-dark');
+  //   const label     = btn.querySelector('.theme-label');
 
-    if (state.theme === 'dark') {
-      if (iconLight) iconLight.classList.add('hidden');
-      if (iconDark)  iconDark.classList.remove('hidden');
-      if (label)     label.textContent = 'Dark Mode';
-    } else {
-      if (iconLight) iconLight.classList.remove('hidden');
-      if (iconDark)  iconDark.classList.add('hidden');
-      if (label)     label.textContent = 'Light Mode';
-    }
-  }
+  //   if (theme === 'dark') {
+  //     if (iconLight) iconLight.classList.add('hidden');
+  //     if (iconDark)  iconDark.classList.remove('hidden');
+  //     if (label)     label.textContent = 'Dark Mode';
+  //     btn.setAttribute('aria-pressed', 'true');
+  //   } else {
+  //     if (iconLight) iconLight.classList.remove('hidden');
+  //     if (iconDark)  iconDark.classList.add('hidden');
+  //     if (label)     label.textContent = 'Light Mode';
+  //     btn.setAttribute('aria-pressed', 'false');
+  //   }
+  // }
 }
 
 // ---------------------------------------------------------------------------
@@ -768,11 +797,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // 4. Attach event listeners.
 
-  // Form submission — add a new transaction.
+  // Form submission ΓÇö add a new transaction.
   document.getElementById('transaction-form')
     .addEventListener('submit', handleFormSubmit);
 
-  // Event delegation on the list — delete a transaction by its id.
+  // Event delegation on the list ΓÇö delete a transaction by its id.
   // Use closest() so clicks on child nodes inside the button still resolve.
   document.getElementById('transaction-list')
     .addEventListener('click', (e) => {
@@ -782,15 +811,15 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
 
-  // Sort-select change — reorder the transaction list.
+  // Sort-select change ΓÇö reorder the transaction list.
   document.getElementById('sort-select')
     .addEventListener('change', handleSortChange);
 
-  // Theme toggle — switch dark / light mode.
+  // Theme toggle ΓÇö switch dark / light mode.
   document.getElementById('theme-toggle')
     .addEventListener('click', handleThemeToggle);
 
-  // Add-category button — append a new custom category.
+  // Add-category button ΓÇö append a new custom category.
   document.getElementById('add-category-btn')
     .addEventListener('click', handleAddCategory);
 });

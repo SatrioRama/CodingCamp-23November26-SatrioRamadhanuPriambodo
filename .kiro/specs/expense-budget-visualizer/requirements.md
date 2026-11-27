@@ -16,6 +16,7 @@ A mobile-friendly single-page web application that helps users track daily spend
 - **Local_Storage**: The browser's Web Storage API used to persist all transaction data client-side.
 - **Sort_Control**: The UI control that changes the display order of items in the Transaction_List.
 - **Theme_Toggle**: The UI control that switches the App between dark and light visual modes.
+- **formatRupiah**: A JavaScript helper that formats a number as Indonesian Rupiah using `toLocaleString('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0, maximumFractionDigits: 0 })`.
 
 ---
 
@@ -27,7 +28,7 @@ A mobile-friendly single-page web application that helps users track daily spend
 
 #### Acceptance Criteria
 
-1. THE Input_Form SHALL provide a text field for item name, a numeric field for amount, and a selector for category.
+1. THE Input_Form SHALL provide a text field for item name, a numeric field for amount (`min="1"` `step="1"`), and a selector for category.
 2. THE Input_Form SHALL populate the category selector with the default options Food, Transport, and Fun.
 3. WHEN the user submits the Input_Form with all fields filled, THE App SHALL add the transaction to the Transaction_List and persist it to Local_Storage.
 4. IF the user submits the Input_Form with any field empty, THEN THE Input_Form SHALL prevent submission and display a validation message indicating which fields are required.
@@ -53,7 +54,7 @@ A mobile-friendly single-page web application that helps users track daily spend
 
 #### Acceptance Criteria
 
-1. THE Balance_Display SHALL show the sum of all transaction amounts.
+1. THE Balance_Display SHALL show the sum of all transaction amounts formatted as Indonesian Rupiah via `formatRupiah()` (e.g. "Rp 25.000").
 2. WHEN a transaction is added, THE Balance_Display SHALL update to reflect the new total without requiring a page reload.
 3. WHEN a transaction is deleted, THE Balance_Display SHALL update to reflect the new total without requiring a page reload.
 
@@ -66,7 +67,7 @@ A mobile-friendly single-page web application that helps users track daily spend
 #### Acceptance Criteria
 
 1. THE Chart SHALL render as a pie chart using the Chart.js library loaded via CDN.
-2. THE Chart SHALL display one segment per category that has at least one transaction, sized proportionally to that category's total amount.
+2. THE Chart SHALL display one segment per category that has at least one transaction, sized proportionally to that category's total amount; tooltips SHALL show each category's amount formatted via `formatRupiah()`.
 3. WHEN a transaction is added, THE Chart SHALL update automatically to reflect the new category totals.
 4. WHEN a transaction is deleted, THE Chart SHALL update automatically to reflect the new category totals.
 
@@ -119,6 +120,8 @@ A mobile-friendly single-page web application that helps users track daily spend
 2. WHEN the user activates dark mode, THE App SHALL apply a dark color scheme to all visible UI elements.
 3. WHEN the user activates light mode, THE App SHALL apply a light color scheme to all visible UI elements.
 4. WHEN the App loads, THE App SHALL restore the last selected theme from Local_Storage.
+5. THE Theme_Toggle button SHALL carry an `aria-pressed` attribute set to `"true"` when dark mode is active and `"false"` when light mode is active.
+6. THE decorative icon spans inside the Theme_Toggle SHALL carry `aria-hidden="true"`.
 
 ---
 
@@ -133,3 +136,18 @@ A mobile-friendly single-page web application that helps users track daily spend
 3. THE App SHALL contain exactly one CSS file located inside a `css/` directory.
 4. THE App SHALL contain exactly one JavaScript file located inside a `js/` directory.
 5. THE App SHALL function correctly in current stable releases of Chrome, Firefox, Edge, and Safari without any installation or setup step.
+
+---
+
+### Requirement 10: Semantic HTML and Accessibility
+
+**User Story:** As a user of assistive technology, I want the page to use correct semantic elements and ARIA attributes, so that screen readers can interpret the interface accurately.
+
+#### Acceptance Criteria
+
+1. THE App's `<header>` SHALL contain a visible `<h1>` element with the page title "Expense & Budget Visualizer".
+2. THE Balance_Display element SHALL be a `<p>` element with `aria-live="polite"` so screen readers announce balance updates.
+3. THE display-options bar (sort control and Theme_Toggle) SHALL be a `<section>` element with `aria-label="Display options"` placed as the first child of the `<main>` element.
+4. THE `#form-error` element SHALL carry `role="alert"` so validation messages are announced immediately by screen readers.
+5. THE `#spending-chart` canvas SHALL carry `role="img"` and `aria-label="Pie chart of spending by category"`.
+6. THE App SHALL include a `<footer>` after `</main>` containing the text "Expense & Budget Visualizer – Coding Camp 2026".

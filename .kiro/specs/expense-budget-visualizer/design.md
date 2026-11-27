@@ -60,7 +60,7 @@ There is one authoritative in-memory state object. Every user action mutates the
 
 **DOM elements:**
 - `#item-name` — `<input type="text">`
-- `#amount` — `<input type="number" min="0.01" step="0.01">`
+- `#amount` — `<input type="number" min="1" step="1">` (whole Rupiah amounts; no decimal places)
 - `#category` — `<select>` populated from state
 - `#add-category-input` — `<input type="text">` for new custom categories
 - `#add-category-btn` — `<button>` to confirm a new custom category
@@ -167,7 +167,7 @@ function sortTransactions(transactions: Transaction[], option: SortOption): Tran
 **DOM elements:**
 - `#theme-toggle` — `<button>` or `<input type="checkbox">`
 
-**Mechanism:** Toggling adds/removes a `dark` class on `<html>`. Tailwind's `darkMode: 'class'` strategy applies dark-variant utilities automatically.
+**Mechanism:** Toggling adds/removes a `dark` class on `<html>`. Tailwind's `darkMode: 'class'` strategy applies dark-variant utilities automatically. `applyTheme(theme)` handles all three side effects: (1) toggling the `dark` class on `<html>`, (2) updating the icon spans and label text in `#theme-toggle`, and (3) setting `aria-pressed` to `"true"` (dark) or `"false"` (light) on the button. It is called on page load to restore the saved theme, and by `handleThemeToggle` on each user click.
 
 **JavaScript interface:**
 
@@ -189,6 +189,7 @@ function applyTheme(theme: 'dark' | 'light'): void
 | `ebv_transactions` | JSON array of `Transaction` objects |
 | `ebv_categories` | JSON array of custom category strings |
 | `ebv_theme` | `"dark"` or `"light"` |
+| `ebv_sort` | Active sort option (`"amount-asc"`, `"amount-desc"`, or `"category-asc"`) |
 
 **JavaScript interface:**
 
@@ -198,6 +199,30 @@ function loadState(): AppState
 ```
 
 `loadState` returns a fully initialized `AppState` with defaults when keys are absent or contain invalid JSON.
+
+---
+
+## Currency Formatting
+
+All monetary amounts displayed to the user are formatted as Indonesian Rupiah by the `formatRupiah(value)` helper:
+
+```js
+function formatRupiah(value) {
+  return value.toLocaleString('id-ID', {
+    style: 'currency',
+    currency: 'IDR',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  });
+}
+```
+
+This function is used in:
+- `renderBalance` — the running total in the Balance_Display
+- `renderList` — each transaction's amount in the Transaction_List
+- The Chart.js tooltip callback — amounts shown on pie slice hover
+
+The amount input uses `min="1"` and `step="1"` because Rupiah is a whole-number currency.
 
 ---
 
@@ -261,7 +286,7 @@ const DEFAULT_STATE = {
 
 ### Property 2: Balance equals sum of transaction amounts
 
-*For any* list of transactions, `computeBalance` SHALL return a value equal to the arithmetic sum of every transaction's `amount` field.
+*For any* list of transactions, `computeBalance` SHALL return a value equal to the arithmetic sum of every transaction's `amount` field. `formatRupiah(computeBalance(transactions))` SHALL produce a non-empty string beginning with "Rp".
 
 **Validates: Requirements 3.1, 3.2, 3.3**
 
