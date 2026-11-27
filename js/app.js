@@ -587,3 +587,210 @@ function renderAll(state) {
   renderList(state.transactions, state.sortOption);
   renderChart(state.transactions);
 }
+
+// ---------------------------------------------------------------------------
+// Theme Application  (Requirements 8.2, 8.3, 8.4)
+// ---------------------------------------------------------------------------
+
+/**
+ * Applies the given theme by toggling the `dark` class on `<html>`.
+ * Called on page load (from DOMContentLoaded) to restore the saved theme,
+ * and called by handleThemeToggle (task 7.5) on each user-initiated switch.
+ *
+ * @param {'dark' | 'light'} theme
+ * @returns {void}
+ */
+function applyTheme(theme) {
+  if (theme === 'dark') {
+    document.documentElement.classList.add('dark');
+  } else {
+    document.documentElement.classList.remove('dark');
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Event Handler Stubs  (Tasks 7.1 – 7.5 will implement these)
+// ---------------------------------------------------------------------------
+
+/**
+ * Handles transaction form submission.
+ * TODO: implement in task 7.1
+ *
+ * @param {SubmitEvent} event
+ * @returns {void}
+ */
+function handleFormSubmit(event) {
+  event.preventDefault();
+
+  // Read form field values
+  const name     = document.getElementById('item-name').value;
+  const amount   = parseFloat(document.getElementById('amount').value);
+  const category = document.getElementById('category').value;
+
+  // Validate
+  const result = validateTransaction({ name, amount, category }, state.categories);
+  const errorEl = document.getElementById('form-error');
+
+  if (!result.valid) {
+    errorEl.textContent = result.errors[0];
+    errorEl.classList.remove('hidden');
+    return;
+  }
+
+  // Hide any previous error
+  errorEl.classList.add('hidden');
+
+  // Build the new transaction
+  const newTransaction = {
+    id: (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function')
+      ? crypto.randomUUID()
+      : Date.now().toString(36) + Math.random().toString(36).slice(2),
+    name:      name.trim(),
+    amount,
+    category,
+    createdAt: Date.now(),
+  };
+
+  // Persist and re-render
+  state.transactions.push(newTransaction);
+  saveState(state);
+  renderAll(state);
+
+  // Clear the form
+  event.target.reset();
+}
+
+/**
+ * Handles deletion of a transaction by its id.
+ * TODO: implement in task 7.2
+ *
+ * @param {string} id - The id of the transaction to delete
+ * @returns {void}
+ */
+function handleDelete(id) {
+  state.transactions = state.transactions.filter(t => t.id !== id);
+  saveState(state);
+  renderAll(state);
+}
+
+/**
+ * Handles adding a new custom category.
+ * TODO: implement in task 7.3
+ *
+ * @returns {void}
+ */
+function handleAddCategory() {
+  const input = document.getElementById('add-category-input');
+  const trimmed = input.value.trim();
+
+  // Silently return if empty or already exists (case-insensitive).
+  if (trimmed === '') return;
+  const alreadyExists = state.categories.some(
+    (cat) => cat.toLowerCase() === trimmed.toLowerCase()
+  );
+  if (alreadyExists) return;
+
+  // Add the new category to state.
+  state.categories.push(trimmed);
+
+  // Persist and sync the dropdown.
+  saveState(state);
+  renderCategories(state.categories);
+
+  // Clear the input.
+  input.value = '';
+}
+
+/**
+ * Handles sort-select change events.
+ * TODO: implement in task 7.4
+ *
+ * @param {Event} event
+ * @returns {void}
+ */
+function handleSortChange(event) {
+  state.sortOption = event.target.value;
+  saveState(state);
+  renderList(state.transactions, state.sortOption);
+}
+
+/**
+ * Handles theme-toggle click events.
+ * TODO: implement in task 7.5
+ *
+ * @returns {void}
+ */
+function handleThemeToggle() {
+  // 1. Toggle the theme in state.
+  state.theme = state.theme === 'dark' ? 'light' : 'dark';
+
+  // 2. Apply the new theme (adds/removes the `dark` class on <html>).
+  applyTheme(state.theme);
+
+  // 3. Persist the new theme preference to localStorage.
+  saveState(state);
+
+  // 4. Update the button label and icon spans if they exist.
+  const btn = document.getElementById('theme-toggle');
+  if (btn) {
+    const iconLight = btn.querySelector('.theme-icon-light');
+    const iconDark  = btn.querySelector('.theme-icon-dark');
+    const label     = btn.querySelector('.theme-label');
+
+    if (state.theme === 'dark') {
+      if (iconLight) iconLight.classList.add('hidden');
+      if (iconDark)  iconDark.classList.remove('hidden');
+      if (label)     label.textContent = 'Dark Mode';
+    } else {
+      if (iconLight) iconLight.classList.remove('hidden');
+      if (iconDark)  iconDark.classList.add('hidden');
+      if (label)     label.textContent = 'Light Mode';
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// App Initialisation  (Requirements 5.3, 6.4, 8.4)
+// ---------------------------------------------------------------------------
+
+document.addEventListener('DOMContentLoaded', () => {
+  // 1. Restore persisted state (or fall back to DEFAULT_STATE).
+  state = loadState();
+
+  // 2. Apply the saved theme before anything is painted.
+  applyTheme(state.theme);
+
+  // 3. Populate the full UI from the restored state.
+  renderAll(state);
+
+  // Sync the sort select to the restored sort preference.
+  document.getElementById('sort-select').value = state.sortOption;
+
+  // 4. Attach event listeners.
+
+  // Form submission — add a new transaction.
+  document.getElementById('transaction-form')
+    .addEventListener('submit', handleFormSubmit);
+
+  // Event delegation on the list — delete a transaction by its id.
+  // Use closest() so clicks on child nodes inside the button still resolve.
+  document.getElementById('transaction-list')
+    .addEventListener('click', (e) => {
+      const btn = e.target.closest('[data-id]');
+      if (btn) {
+        handleDelete(btn.dataset.id);
+      }
+    });
+
+  // Sort-select change — reorder the transaction list.
+  document.getElementById('sort-select')
+    .addEventListener('change', handleSortChange);
+
+  // Theme toggle — switch dark / light mode.
+  document.getElementById('theme-toggle')
+    .addEventListener('click', handleThemeToggle);
+
+  // Add-category button — append a new custom category.
+  document.getElementById('add-category-btn')
+    .addEventListener('click', handleAddCategory);
+});

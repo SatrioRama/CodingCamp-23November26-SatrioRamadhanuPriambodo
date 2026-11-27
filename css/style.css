@@ -1,0 +1,132 @@
+/* =============================================================================
+   expense-budget-visualizer — style.css
+   Custom styles that complement the Tailwind utility classes in index.html.
+   Only CSS — no build tooling required.
+   ============================================================================= */
+
+/* ---------------------------------------------------------------------------
+   1. Typography — system font stack, comfortable base size and line height
+   --------------------------------------------------------------------------- */
+
+body {
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue",
+    Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
+    "Segoe UI Symbol";
+  font-size: 1rem;       /* 16 px */
+  line-height: 1.6;
+}
+
+/* ---------------------------------------------------------------------------
+   2. Body background — adapts to light / dark mode
+      (Tailwind's bg-gray-100 / dark:bg-gray-900 covers this via classes;
+       the CSS fallback here ensures it also works if the class is missing)
+   --------------------------------------------------------------------------- */
+
+body {
+  background-color: #f3f4f6; /* gray-100 */
+}
+
+.dark body {
+  background-color: #111827; /* gray-900 */
+}
+
+/* ---------------------------------------------------------------------------
+   3. Smooth theme transition — prevents the hard snap when switching modes
+      Applied on <html> so the transition covers every element at once.
+   --------------------------------------------------------------------------- */
+
+html {
+  transition: background-color 200ms ease, color 200ms ease;
+}
+
+*, *::before, *::after {
+  transition-property: background-color, color, border-color;
+  transition-duration: 200ms;
+  transition-timing-function: ease;
+}
+
+/* ---------------------------------------------------------------------------
+   4. Balance header — dark-mode override for the indigo header background
+      Tailwind's bg-indigo-600 stays; we deepen it slightly in dark mode.
+   --------------------------------------------------------------------------- */
+
+.dark header {
+  background-color: #3730a3; /* indigo-800 */
+}
+
+/* ---------------------------------------------------------------------------
+   5. Scrollable transaction list — smooth scroll + optional webkit scrollbar
+   --------------------------------------------------------------------------- */
+
+#transaction-list {
+  scroll-behavior: smooth;
+}
+
+/* Webkit-only custom scrollbar (Chrome, Safari, Edge) */
+#transaction-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+#transaction-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+#transaction-list::-webkit-scrollbar-thumb {
+  background-color: #c7d2fe; /* indigo-200 */
+  border-radius: 3px;
+}
+
+.dark #transaction-list::-webkit-scrollbar-thumb {
+  background-color: #4338ca; /* indigo-700 */
+}
+
+/* ---------------------------------------------------------------------------
+   6. Chart container — prevent overflow on small screens
+      The wrapping div already has max-w-xs; we cap the canvas height too.
+   --------------------------------------------------------------------------- */
+
+#spending-chart {
+  max-height: 280px;
+  width: 100% !important; /* override Chart.js inline width */
+}
+
+/* Wrapper that Chart.js may inject */
+.chartjs-size-monitor,
+.chartjs-render-monitor {
+  max-height: 280px;
+}
+
+/* ---------------------------------------------------------------------------
+   7. Dark mode — Chart.js canvas background
+      Chart.js renders onto a <canvas>; give it a subtle dark surface.
+   --------------------------------------------------------------------------- */
+
+.dark #spending-chart {
+  background-color: #1f2937; /* gray-800 — matches card backgrounds */
+  border-radius: 0.5rem;
+}
+
+/* ---------------------------------------------------------------------------
+   8. Form / input focus — fill any gaps Tailwind's focus:ring doesn't cover
+      (Tailwind utilities already set focus:ring-2 focus:ring-indigo-500 on
+       each input, so this only catches the rare case they're absent.)
+   --------------------------------------------------------------------------- */
+
+input:focus,
+select:focus,
+button:focus-visible {
+  outline: 2px solid #6366f1; /* indigo-500 */
+  outline-offset: 2px;
+}
+
+/* ---------------------------------------------------------------------------
+   9. Miscellaneous small-screen polish
+   --------------------------------------------------------------------------- */
+
+/* Keep the sort/theme bar from wrapping too aggressively on very narrow screens */
+@media (max-width: 360px) {
+  #sort-select {
+    max-width: 9rem;
+  }
+}

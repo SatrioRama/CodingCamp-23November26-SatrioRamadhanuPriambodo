@@ -101,7 +101,7 @@ Build a mobile-first, single-page expense tracker as three files (`index.html`, 
     - Call `renderBalance`, `renderList`, `renderChart`, and `renderCategories` with current state values
     - _Requirements: 5.3_
 
-- [-] 6. Checkpoint — Wire up initial app load
+- [x] 6. Checkpoint — Wire up initial app load
   - In `js/app.js`, on `DOMContentLoaded`:
     1. Call `loadState()` to populate the in-memory state object
     2. Call `applyTheme(state.theme)` to restore the saved theme
@@ -111,8 +111,8 @@ Build a mobile-first, single-page expense tracker as three files (`index.html`, 
   - Verify the page loads without console errors when `localStorage` contains saved data
   - _Requirements: 5.3, 6.4, 8.4_
 
-- [ ] 7. Implement event handlers in `js/app.js`
-  - [~] 7.1 Implement `handleFormSubmit(event)` for `#transaction-form`
+- [x] 7. Implement event handlers in `js/app.js`
+  - [x] 7.1 Implement `handleFormSubmit(event)` for `#transaction-form`
     - Call `event.preventDefault()`
     - Read values from `#item-name`, `#amount`, `#category`
     - Run `validateTransaction`; if invalid, display an inline message naming the failing fields and return early
@@ -120,35 +120,35 @@ Build a mobile-first, single-page expense tracker as three files (`index.html`, 
     - Push to `state.transactions`, call `saveState(state)`, call `renderAll(state)`, reset the form
     - _Requirements: 1.3, 1.4, 1.5, 3.2, 4.3, 5.1_
 
-  - [~] 7.2 Implement `handleDelete(id)` for delete buttons in `#transaction-list`
+  - [x] 7.2 Implement `handleDelete(id)` for delete buttons in `#transaction-list`
     - Use event delegation on `#transaction-list` listening for clicks on `[data-id]` buttons
     - Filter `state.transactions` to remove the matching id
     - Call `saveState(state)`, call `renderAll(state)`
     - _Requirements: 2.3, 3.3, 4.4, 5.2_
 
-  - [~] 7.3 Implement `handleAddCategory()` for `#add-category-btn`
+  - [x] 7.3 Implement `handleAddCategory()` for `#add-category-btn`
     - Read and trim the value from `#add-category-input`
     - Silently ignore empty strings or values already present in `state.categories`
     - Append the new category to `state.categories`, call `saveState(state)`, call `renderCategories(state.categories)`, clear the input
     - _Requirements: 6.1, 6.2, 6.3_
 
-  - [~] 7.4 Implement `handleSortChange(event)` for `#sort-select`
+  - [x] 7.4 Implement `handleSortChange(event)` for `#sort-select`
     - Update `state.sortOption` to the selected value
     - Call `renderList(state.transactions, state.sortOption)` (no persistence needed for sort preference)
     - _Requirements: 7.2, 7.3_
 
-  - [~] 7.5 Implement `handleThemeToggle()` and `applyTheme(theme)` for `#theme-toggle`
+  - [x] 7.5 Implement `handleThemeToggle()` and `applyTheme(theme)` for `#theme-toggle`
     - `applyTheme('dark')`: add class `dark` to `<html>`; `applyTheme('light')`: remove it
     - `handleThemeToggle`: toggle `state.theme` between `'dark'` and `'light'`, call `applyTheme`, write `ebv_theme` to `localStorage`
     - _Requirements: 8.1, 8.2, 8.3, 8.4_
 
-- [~] 8. Apply CSS styling in `css/style.css` and Tailwind classes in `index.html`
+- [x] 8. Apply CSS styling in `css/style.css` and Tailwind classes in `index.html`
   - Apply Tailwind utility classes throughout `index.html` for a mobile-first responsive layout (single-column on small screens, wider on medium+)
   - In `css/style.css`, write custom styles that complement Tailwind: scrollable transaction list height, chart container sizing, dark-mode color overrides not covered by Tailwind utilities, and any typography adjustments
   - Ensure the transaction list scrolls when it overflows its container
   - _Requirements: 2.2, 9.3, 9.5_
 
-- [~] 9. Final checkpoint — End-to-end verification
+- [x] 9. Final checkpoint — End-to-end verification
   - Open `index.html` directly in Chrome, Firefox, Edge, and Safari (no server required)
   - Confirm: adding a transaction updates the list, balance, and pie chart
   - Confirm: deleting a transaction updates the list, balance, and pie chart
