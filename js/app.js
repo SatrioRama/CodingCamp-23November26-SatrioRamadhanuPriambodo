@@ -756,26 +756,6 @@ function handleThemeToggle() {
 
   // 3. Persist the new theme preference to localStorage.
   saveState(state);
-
-  // 4. Update the button label and icon spans if they exist.
-  // const btn = document.getElementById('theme-toggle');
-  // if (btn) {
-  //   const iconLight = btn.querySelector('.theme-icon-light');
-  //   const iconDark  = btn.querySelector('.theme-icon-dark');
-  //   const label     = btn.querySelector('.theme-label');
-
-  //   if (theme === 'dark') {
-  //     if (iconLight) iconLight.classList.add('hidden');
-  //     if (iconDark)  iconDark.classList.remove('hidden');
-  //     if (label)     label.textContent = 'Dark Mode';
-  //     btn.setAttribute('aria-pressed', 'true');
-  //   } else {
-  //     if (iconLight) iconLight.classList.remove('hidden');
-  //     if (iconDark)  iconDark.classList.add('hidden');
-  //     if (label)     label.textContent = 'Light Mode';
-  //     btn.setAttribute('aria-pressed', 'false');
-  //   }
-  // }
 }
 
 // ---------------------------------------------------------------------------
