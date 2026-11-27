@@ -27,8 +27,8 @@
     <p id="balance" aria-live="polite" class="text-4xl font-bold">Rp 0</p>
   </header>
 
-  <!-- Input Form, Transaction List & Chart & single <main> for valid HTML -->
-  <main class="max-w-lg mx-auto px-4 py-6 space-y-6">
+  <!-- Main content: display options, form, transaction list, chart -->
+  <main class="max-w-lg md:max-w-3xl lg:max-w-5xl mx-auto px-4 py-6 space-y-6">
 
   <!-- Sort Control and Theme Toggle -->
   <section aria-label="Display options" class="flex items-center justify-between gap-3 px-4 py-3 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shadow-sm">
@@ -47,6 +47,10 @@
     </button>
   </section>
 
+  <!-- Two-column grid on large screens -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <!-- Left column: Add Transaction Form + Add Custom Category -->
+    <div class="space-y-6">
     <!-- Add Transaction Form -->
     <section class="bg-white dark:bg-gray-800 rounded-2xl shadow p-5 space-y-4">
       <h2 class="text-lg font-semibold text-gray-700 dark:text-gray-200">Add Transaction</h2>
@@ -135,6 +139,9 @@
       </div>
     </section>
 
+    </div><!-- /left-col -->
+    <!-- Right column: Transaction List + Chart -->
+    <div class="space-y-6">
     <!-- Transaction List -->
     <section>
       <h2 class="text-lg font-semibold text-gray-700 dark:text-gray-200 mb-2">Transactions</h2>
@@ -153,6 +160,8 @@
       </div>
     </section>
 
+    </div><!-- /right-col -->
+  </div><!-- /grid -->
   </main>
 
   <footer class="text-center text-xs text-gray-400 dark:text-gray-500 py-6 px-4">
