@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Expense Budget Visualizer</title>
+
+  <!-- Tailwind CSS Play CDN with darkMode class strategy -->
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+    }
+  </script>
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Balance Display -->
+  <header class="bg-indigo-600 text-white py-8 px-4 text-center shadow-md">
+    <p class="text-sm font-medium uppercase tracking-widest opacity-80 mb-1">Total Balance</p>
+    <h1 id="balance" class="text-4xl font-bold">$0.00</h1>
+  </header>
+
+  <!-- Sort Control and Theme Toggle -->
+  <div class="flex items-center justify-between gap-3 px-4 py-3 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shadow-sm">
+    <div class="flex items-center gap-2">
+      <label for="sort-select" class="text-sm font-medium text-gray-600 dark:text-gray-300 whitespace-nowrap">Sort by:</label>
+      <select id="sort-select" class="text-sm border border-gray-300 dark:border-gray-600 rounded-md px-2 py-1.5 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+        <option value="amount-asc">Amount: Low to High</option>
+        <option value="amount-desc">Amount: High to Low</option>
+        <option value="category-asc">Category: A–Z</option>
+      </select>
+    </div>
+    <button id="theme-toggle" class="flex items-center gap-1.5 text-sm font-medium px-3 py-1.5 rounded-md bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
+      <span class="theme-icon-light">☀️</span>
+      <span class="theme-icon-dark hidden">🌙</span>
+      <span class="theme-label">Light Mode</span>
+    </button>
+  </div>
+
+  <!-- Input Form -->
+  <main class="max-w-lg mx-auto px-4 py-6 space-y-6">
+
+    <!-- Add Transaction Form -->
+    <section class="bg-white dark:bg-gray-800 rounded-2xl shadow p-5 space-y-4">
+      <h2 class="text-lg font-semibold text-gray-700 dark:text-gray-200">Add Transaction</h2>
+
+      <form id="transaction-form" class="space-y-4" novalidate>
+        <!-- Item Name -->
+        <div>
+          <label for="item-name" class="block text-sm font-medium text-gray-600 dark:text-gray-300 mb-1">
+            Item Name
+          </label>
+          <input
+            type="text"
+            id="item-name"
+            name="item-name"
+            placeholder="e.g. Coffee"
+            required
+            class="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-gray-100 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          >
+        </div>
+
+        <!-- Amount -->
+        <div>
+          <label for="amount" class="block text-sm font-medium text-gray-600 dark:text-gray-300 mb-1">
+            Amount ($)
+          </label>
+          <input
+            type="number"
+            id="amount"
+            name="amount"
+            min="0.01"
+            step="0.01"
+            placeholder="0.00"
+            required
+            class="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-gray-100 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          >
+        </div>
+
+        <!-- Category -->
+        <div>
+          <label for="category" class="block text-sm font-medium text-gray-600 dark:text-gray-300 mb-1">
+            Category
+          </label>
+          <select
+            id="category"
+            name="category"
+            required
+            class="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-gray-100 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          >
+            <option value="">-- Select category --</option>
+            <option value="Food">Food</option>
+            <option value="Transport">Transport</option>
+            <option value="Fun">Fun</option>
+          </select>
+        </div>
+
+        <!-- Submit -->
+        <button
+          type="submit"
+          class="w-full bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white font-semibold py-2 px-4 rounded-lg text-sm transition-colors"
+        >
+          Add Transaction
+        </button>
+
+        <!-- Validation message placeholder -->
+        <p id="form-error" class="hidden text-sm text-red-500 font-medium"></p>
+      </form>
+    </section>
+
+    <!-- Add Custom Category -->
+    <section class="bg-white dark:bg-gray-800 rounded-2xl shadow p-5">
+      <h2 class="text-lg font-semibold text-gray-700 dark:text-gray-200 mb-3">Add Custom Category</h2>
+      <div class="flex gap-2">
+        <input
+          type="text"
+          id="add-category-input"
+          placeholder="e.g. Healthcare"
+          class="flex-1 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-gray-100 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+        >
+        <button
+          id="add-category-btn"
+          type="button"
+          class="bg-emerald-500 hover:bg-emerald-600 active:bg-emerald-700 text-white font-semibold px-4 py-2 rounded-lg text-sm transition-colors whitespace-nowrap"
+        >
+          Add
+        </button>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Transaction List & Chart -->
+  <main class="max-w-lg mx-auto px-4 py-6 space-y-6">
+
+    <!-- Transaction List -->
+    <section>
+      <h2 class="text-lg font-semibold text-gray-700 dark:text-gray-200 mb-2">Transactions</h2>
+      <ul id="transaction-list"
+          class="divide-y divide-gray-200 dark:divide-gray-700 overflow-y-auto max-h-72 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+        <!-- populated by JavaScript -->
+      </ul>
+    </section>
+
+    <!-- Spending Chart -->
+    <section>
+      <h2 class="text-lg font-semibold text-gray-700 dark:text-gray-200 mb-2">Spending by Category</h2>
+      <div class="relative w-full max-w-xs mx-auto">
+        <canvas id="spending-chart"></canvas>
+      </div>
+    </section>
+
+  </main>
+
+  <script src="js/app.js" defer></script>
+</body>
+</html>
